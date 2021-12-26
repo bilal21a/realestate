@@ -12,7 +12,6 @@ class AccountSeeder extends BaseSeeder
     public function run()
     {
         $faker = Factory::create();
-
         Account::truncate();
 
         $files = $this->uploadFiles('accounts');
