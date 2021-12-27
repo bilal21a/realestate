@@ -1,10 +1,11 @@
 <?php
 
 return [
+    'Languages'            => 'Јазици',
     'choose_image' => 'Choose image',
     'actions' => 'Actions',
-    'save' => 'Save',
-    'save_and_continue' => 'Save & Edit',
+    'save' => 'Зачувај',
+    'save_and_continue' => 'Зачувај и Уредувај',
     'image' => 'Image',
     'image_placeholder' => 'Insert path of image or click upload button',
     'create' => 'Create',
@@ -20,7 +21,7 @@ return [
     'description' => 'Description',
     'name' => 'Name',
     'slug' => 'Slug',
-    'title' => 'Title',
+    'title' => 'Име',
     'value' => 'Value',
     'name_placeholder' => 'Name',
     'alias_placeholder' => 'Alias',
@@ -33,7 +34,7 @@ return [
     'is_featured' => 'Is featured?',
     'is_default' => 'Is default?',
     'update' => 'Update',
-    'publish' => 'Publish',
+    'publish' => 'Објави',
     'remove_image' => 'Remove image',
     'remove_file' => 'Remove file',
     'order' => 'Order',

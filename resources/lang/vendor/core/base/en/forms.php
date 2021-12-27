@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'Languages'            => 'Languages',
     'choose_image' => 'Choose image',
     'actions' => 'Actions',
     'save' => 'Save',
