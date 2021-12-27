@@ -667,7 +667,7 @@ $(function () {
         });
 
         $('body').on('change', '#sort_by', function() {
-            
+
             if($('form#filters-form').length) {
                 $('#filter_sort_by').val($(this).val());
                 $('form#filters-form').submit();
@@ -676,7 +676,7 @@ $(function () {
                 searchParams.set("sort_by", $(this).val());
                 window.location.search = searchParams.toString();
             }
-            
+
         })
     }
 
@@ -981,4 +981,97 @@ $(function () {
             }
         });
     });
+
+    $('body')
+        .on('change', 'select[name=category_id].has-sub-category', function () {
+            let _this = $(this);
+            if ($('#sub_category').length < 1) {
+                return;
+            }
+
+            $.ajax({
+                url: _this.data('url'),
+                data: {
+                    id: _this.val()
+                },
+                beforeSend: () => {
+                    $('#sub_category').html('<option value="">' + ($('#sub_category').data('placeholder')) + '</option>');
+                },
+                success: data => {
+                    let option = '<option value="">' + ($('#sub_category').data('placeholder')) + '</option>';
+                    $.each(data.data, (index, item) => {
+                        option += '<option value="' + item.id + '">' + item.name + '</option>';
+                    });
+
+                    $('#sub_category').html(option).select2();
+                }
+            });
+        })
+        .on('change', 'select#filter_country_id', function () {
+            let _this = $(this);
+
+            $.ajax({
+                url: $('#filter_state_id').data('url'),
+                data: {
+                    id: _this.val()
+                },
+                beforeSend: () => {
+                    $('#filter_state_id').html('<option value="">' + ($('#filter_state_id').data('placeholder')) + '</option>');
+                    $('#filter_city_id').html('<option value="">' + ($('#filter_city_id').data('placeholder')) + '</option>');
+                },
+                success: data => {
+                    let option = '<option value="">' + ($('#filter_state_id').data('placeholder')) + '</option>';
+                    $.each(data.data, (index, item) => {
+                        option += '<option value="' + item.id + '">' + item.name + '</option>';
+                    });
+
+                    $('#filter_state_id').html(option).select2();
+                }
+            });
+        })
+        .on('change', 'select#filter_state_id', function () {
+            let _this = $(this);
+
+            $.ajax({
+                url: $('#filter_city_id').data('url'),
+                data: {
+                    id: _this.val()
+                },
+                beforeSend: () => {
+                    $('#filter_city_id').html('<option value="">' + ($('#filter_city_id').data('placeholder')) + '</option>');
+                },
+                success: data => {
+                    let option = '<option value="">' + ($('#filter_city_id').data('placeholder')) + '</option>';
+                    $.each(data.data, (index, item) => {
+                        option += '<option value="' + item.id + '">' + item.name + '</option>';
+                    });
+
+                    $('#filter_city_id').html(option).select2();
+                }
+            });
+        });
+
+    if ($('#filter_country_id').length > 0) {
+        $('#filter_country_id').select2({
+            allowClear: true
+        });
+    }
+
+    if ($('#filter_state_id').length > 0) {
+        $('#filter_state_id').select2({
+            allowClear: true
+        });
+    }
+
+    if ($('#filter_city_id').length > 0) {
+        $('#filter_city_id').select2({
+            allowClear: true
+        });
+    }
+
+    if ($('#sub_category').length > 0) {
+        $('#sub_category').select2({
+            allowClear: true
+        });
+    }
 });

@@ -2,6 +2,7 @@
 
 namespace Botble\Blog\Providers;
 
+use Botble\LanguageAdvanced\Supports\LanguageAdvancedManager;
 use Botble\Shortcode\View\View;
 use Illuminate\Routing\Events\RouteMatched;
 use Botble\Base\Traits\LoadAndPublishDataTrait;
@@ -56,7 +57,7 @@ class BlogServiceProvider extends ServiceProvider
 
         $this->setNamespace('plugins/blog')
             ->loadHelpers()
-            ->loadAndPublishConfigurations(['permissions'])
+            ->loadAndPublishConfigurations(['permissions', 'general'])
             ->loadAndPublishViews()
             ->loadAndPublishTranslations()
             ->loadRoutes(['web', 'api'])
@@ -105,10 +106,31 @@ class BlogServiceProvider extends ServiceProvider
                 ]);
         });
 
-        $this->app->booted(function () {
+        $useLanguageV2 = $this->app['config']->get('plugins.blog.general.use_language_v2', false) &&
+            defined('LANGUAGE_ADVANCED_MODULE_SCREEN_NAME');
+
+        if (defined('LANGUAGE_MODULE_SCREEN_NAME') && $useLanguageV2) {
+            LanguageAdvancedManager::registerModule(Post::class, [
+                'name',
+                'description',
+                'content',
+            ]);
+
+            LanguageAdvancedManager::registerModule(Category::class, [
+                'name',
+                'description',
+            ]);
+
+            LanguageAdvancedManager::registerModule(Tag::class, [
+                'name',
+                'description',
+            ]);
+        }
+
+        $this->app->booted(function () use ($useLanguageV2) {
             $models = [Post::class, Category::class, Tag::class];
 
-            if (defined('LANGUAGE_MODULE_SCREEN_NAME')) {
+            if (defined('LANGUAGE_MODULE_SCREEN_NAME') && !$useLanguageV2) {
                 Language::registerModule($models);
             }
 

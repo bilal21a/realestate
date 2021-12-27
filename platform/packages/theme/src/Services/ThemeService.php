@@ -183,7 +183,7 @@ class ThemeService
                 ];
             }
 
-            $publishPath = $themePath . '/' . $theme;
+            $publishPath = $themePath . '/' . Theme::getPublicThemeName();
 
             if (!$this->files->isDirectory($publishPath)) {
                 $this->files->makeDirectory($publishPath, 0755, true);

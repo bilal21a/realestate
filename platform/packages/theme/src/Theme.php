@@ -383,11 +383,28 @@ class Theme implements ThemeContract
         }
 
         $theme = setting('theme');
+
         if ($theme) {
             return $theme;
         }
 
         return Arr::first(scan_folder(theme_path()));
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicThemeName()
+    {
+        $theme = $this->getThemeName();
+
+        $publicThemeName = $this->config->get('packages.theme.general.public_theme_name');
+
+        if ($publicThemeName && $publicThemeName != $theme) {
+            return $publicThemeName;
+        }
+
+        return $theme;
     }
 
     /**
@@ -988,7 +1005,7 @@ class Theme implements ThemeContract
         }
 
         $content->withHeaders([
-            'CMS-Version'       => '5.23.4',
+            'CMS-Version'       => '5.23.6',
             'Authorization-At'  => setting('membership_authorization_at'),
             'Activated-License' => !empty(setting('licensed_to')) ? 'Yes' : 'No',
         ]);
@@ -1048,5 +1065,13 @@ class Theme implements ThemeContract
     public function loadView(string $view)
     {
         return $this->view->make($this->getThemeNamespace('views') . '.' . $view)->render();
+    }
+
+    /**
+     * @return string
+     */
+    public function getStyleIntegrationPath()
+    {
+        return public_path(Theme::path() . '/css/style.integration.css');
     }
 }

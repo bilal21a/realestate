@@ -107,6 +107,7 @@ class SystemManagement
             'fileinfo'                 => extension_loaded('fileinfo'),
             'tokenizer'                => extension_loaded('tokenizer'),
             'imagick_or_gd'            => extension_loaded('imagick') || extension_loaded('gd'),
+            'zip'                      => extension_loaded('zip'),
         ];
     }
 

@@ -107,8 +107,7 @@ class PropertyForm extends FormAbstract
         $cityChoices = [];
 
         foreach ($cities as $city) {
-            if (
-                ($city->state->id && $city->state->status != BaseStatusEnum::PUBLISHED) ||
+            if (($city->state->id && $city->state->status != BaseStatusEnum::PUBLISHED) ||
                 ($city->country->id && $city->country->status != BaseStatusEnum::PUBLISHED)
             ) {
                 continue;
@@ -144,11 +143,6 @@ class PropertyForm extends FormAbstract
                     'data-counter' => 120,
                 ],
             ])
-            // ->add('type_id', 'customSelect', [
-            //     'label'      => trans('plugins/real-estate::property.form.type'),
-            //     'label_attr' => ['class' => 'control-label required'],
-            //     'choices'    => $types,
-            // ])
             ->addMetaBoxes([
                 'type_id'   => [
                     'title'    => trans('plugins/real-estate::property.form.type'),

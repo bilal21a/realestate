@@ -9,6 +9,7 @@ use Botble\Base\Supports\RepositoryHelper;
 use Botble\Blog\Repositories\Interfaces\PostInterface;
 use Botble\Location\Models\City;
 use Botble\Location\Repositories\Interfaces\CityInterface;
+use Botble\Location\Repositories\Interfaces\StateInterface;
 use Botble\RealEstate\Enums\ModerationStatusEnum;
 use Botble\RealEstate\Enums\PropertyTypeEnum;
 use Botble\RealEstate\Models\Account;
@@ -21,7 +22,6 @@ use Botble\RealEstate\Repositories\Interfaces\TypeInterface;
 use Botble\Slug\Repositories\Interfaces\SlugInterface;
 use Botble\Testimonial\Repositories\Interfaces\TestimonialInterface;
 use Botble\Theme\Http\Controllers\PublicController;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -36,7 +36,6 @@ use Theme\Resido\Http\Resources\PropertyHTMLResource;
 use Theme\Resido\Http\Resources\PropertyResource;
 use Theme\Resido\Http\Resources\ReviewResource;
 use Theme\Resido\Http\Resources\TestimonialResource;
-use Botble\Base\Supports\Language;
 
 class ResidoController extends PublicController
 {
@@ -50,17 +49,18 @@ class ResidoController extends PublicController
      * @return \Response
      */
     public function getPropertiesByCity(
-        string $key,
-        Request $request,
-        SlugInterface $slugRepository,
-        CityInterface $cityRepository,
+        string            $key,
+        Request           $request,
+        SlugInterface     $slugRepository,
+        CityInterface     $cityRepository,
         PropertyInterface $propertyRepository,
         CategoryInterface $categoryRepository
-    ) {
+    )
+    {
         $slug = $slugRepository->getFirstBy([
-            'slugs.key' => $key,
+            'slugs.key'      => $key,
             'reference_type' => City::class,
-            'prefix' => SlugHelper::getPrefix(City::class),
+            'prefix'         => SlugHelper::getPrefix(City::class),
         ]);
 
         if (!$slug) {
@@ -83,7 +83,7 @@ class ResidoController extends PublicController
 
         $params = [
             'paginate' => [
-                'per_page' => (int)theme_option('number_of_properties_per_page', 12),
+                'per_page'      => (int)theme_option('number_of_properties_per_page', 12),
                 'current_paged' => (int)$request->input('page', 1),
             ],
             'order_by' => ['re_properties.created_at' => 'DESC'],
@@ -131,8 +131,8 @@ class ResidoController extends PublicController
             case 'rent':
                 $properties = app(PropertyInterface::class)->getPropertiesByConditions(
                     [
-                        're_properties.is_featured' => true,
-                        're_properties.type' => PropertyTypeEnum::RENT,
+                        're_properties.is_featured'       => true,
+                        're_properties.type'              => PropertyTypeEnum::RENT,
                         're_properties.moderation_status' => ModerationStatusEnum::APPROVED,
                     ],
                     (int)theme_option('number_of_properties_for_rent', 8),
@@ -144,8 +144,8 @@ class ResidoController extends PublicController
             case 'sale':
                 $properties = app(PropertyInterface::class)->getPropertiesByConditions(
                     [
-                        're_properties.is_featured' => true,
-                        're_properties.type' => PropertyTypeEnum::SALE,
+                        're_properties.is_featured'       => true,
+                        're_properties.type'              => PropertyTypeEnum::SALE,
                         're_properties.moderation_status' => ModerationStatusEnum::APPROVED,
                     ],
                     (int)theme_option('number_of_properties_for_sale', 8),
@@ -197,9 +197,9 @@ class ResidoController extends PublicController
     public function ajaxGetPropertiesForMap(Request $request, BaseHttpResponse $response)
     {
         $params = [
-            'with' => config('plugins.real-estate.real-estate.properties.relations'),
+            'with'     => config('plugins.real-estate.real-estate.properties.relations'),
             'paginate' => [
-                'per_page' => 20,
+                'per_page'      => 20,
                 'current_paged' => (int)$request->input('page', 1),
             ],
         ];
@@ -237,8 +237,8 @@ class ResidoController extends PublicController
     public function getAgents(Request $request, AccountInterface $accountRepository)
     {
         $accounts = $accountRepository->advancedGet([
-            'paginate' => [
-                'per_page' => 12,
+            'paginate'  => [
+                'per_page'      => 12,
                 'current_paged' => (int)$request->input('page'),
             ],
             'withCount' => [
@@ -262,11 +262,12 @@ class ResidoController extends PublicController
      * @return \Response
      */
     public function getAgent(
-        string $username,
-        Request $request,
-        AccountInterface $accountRepository,
+        string            $username,
+        Request           $request,
+        AccountInterface  $accountRepository,
         PropertyInterface $propertyRepository
-    ) {
+    )
+    {
         $account = $accountRepository->getFirstBy(['username' => $username]);
 
         if (!$account) {
@@ -282,19 +283,19 @@ class ResidoController extends PublicController
         foreach ($propertyTypes as $propertyType) {
             $properties = $propertyRepository->advancedGet([
                 'condition' => [
-                    'author_id' => $account->id,
+                    'author_id'   => $account->id,
                     'author_type' => Account::class,
-                    'type_id' => $propertyType->id,
+                    'type_id'     => $propertyType->id,
                 ],
-                'paginate' => [
-                    'per_page' => 12,
+                'paginate'  => [
+                    'per_page'      => 12,
                     'current_paged' => (int)$request->input('page'),
                 ],
-                'with' => config('plugins.real-estate.real-estate.properties.relations'),
+                'with'      => config('plugins.real-estate.real-estate.properties.relations'),
             ]);
 
             $propertiesRelated[] = [
-                'type' => $propertyType,
+                'type'       => $propertyType,
                 'properties' => $properties,
             ];
 
@@ -347,14 +348,14 @@ class ResidoController extends PublicController
                 'condition' => [
                     ['re_properties.id', 'IN', $arrValue],
                 ],
-                'order_by' => [
+                'order_by'  => [
                     're_properties.id' => 'DESC',
                 ],
-                'paginate' => [
-                    'per_page' => (int)theme_option('number_of_properties_per_page', 12),
+                'paginate'  => [
+                    'per_page'      => (int)theme_option('number_of_properties_per_page', 12),
                     'current_paged' => (int)$request->input('page', 1),
                 ],
-                'with' => config('plugins.real-estate.real-estate.properties.relations'),
+                'with'      => config('plugins.real-estate.real-estate.properties.relations'),
             ]);
         }
 
@@ -372,10 +373,11 @@ class ResidoController extends PublicController
      * @return BaseHttpResponse|\Illuminate\Http\JsonResponse|RedirectResponse|JsonResource
      */
     public function ajaxGetFeaturedAgents(
-        Request $request,
+        Request          $request,
         BaseHttpResponse $response,
         AccountInterface $accountRepository
-    ) {
+    )
+    {
         if (!$request->ajax()) {
             abort(404);
         }
@@ -384,10 +386,10 @@ class ResidoController extends PublicController
             'condition' => [
                 're_accounts.is_featured' => true,
             ],
-            'order_by' => [
+            'order_by'  => [
                 're_accounts.id' => 'DESC',
             ],
-            'take' => 4,
+            'take'      => 4,
             'withCount' => [
                 'properties' => function ($query) {
                     return RepositoryHelper::applyBeforeExecuteQuery($query, $query->getModel());
@@ -407,10 +409,11 @@ class ResidoController extends PublicController
      * @return BaseHttpResponse
      */
     public function ajaxGetTestimonials(
-        Request $request,
-        BaseHttpResponse $response,
+        Request              $request,
+        BaseHttpResponse     $response,
         TestimonialInterface $testimonialRepository
-    ) {
+    )
+    {
         if (!$request->ajax() || !$request->wantsJson()) {
             abort(404);
         }
@@ -431,16 +434,17 @@ class ResidoController extends PublicController
         Request $request,
         BaseHttpResponse $response,
         ReviewInterface $reviewRepository
-    ) {
+    )
+    {
         $reviews = $reviewRepository->advancedGet([
             'condition' => [
-                'status' => BaseStatusEnum::PUBLISHED,
+                'status'          => BaseStatusEnum::PUBLISHED,
                 'reviewable_type' => $request->input('reviewable_type', Property::class),
-                'reviewable_id' => $id,
+                'reviewable_id'   => $id,
             ],
-            'order_by' => ['created_at' => 'desc'],
-            'paginate' => [
-                'per_page' => (int)$request->input('per_page', 10),
+            'order_by'  => ['created_at' => 'desc'],
+            'paginate'  => [
+                'per_page'      => (int)$request->input('per_page', 10),
                 'current_paged' => (int)$request->input('page', 1),
             ],
         ]);
@@ -459,32 +463,33 @@ class ResidoController extends PublicController
         Request $request,
         BaseHttpResponse $response,
         ReviewInterface $reviewRepository
-    ) {
+    )
+    {
         if (!$request->ajax() || !$request->wantsJson()) {
             abort(404);
         }
 
         $rating = $reviewRepository->advancedGet([
             'condition' => [
-                'status' => BaseStatusEnum::PUBLISHED,
+                'status'          => BaseStatusEnum::PUBLISHED,
                 'reviewable_type' => $request->input('reviewable_type', Property::class),
-                'reviewable_id' => $id,
+                'reviewable_id'   => $id,
             ],
             'withCount' => [
-                'meta as service_avg' => function ($query) {
+                'meta as service_avg'     => function ($query) {
                     $query->select(DB::raw('avg(value)'))->where('key', 'service');
                 },
-                'meta as value_avg' => function ($query) {
+                'meta as value_avg'       => function ($query) {
                     $query->select(DB::raw('avg(value)'))->where('key', 'value');
                 },
-                'meta as location_avg' => function ($query) {
+                'meta as location_avg'    => function ($query) {
                     $query->select(DB::raw('avg(value)'))->where('key', 'location');
                 },
                 'meta as cleanliness_avg' => function ($query) {
                     $query->select(DB::raw('avg(value)'))->where('key', 'cleanliness');
                 },
             ],
-            'take' => 1,
+            'take'      => 1,
         ]);
         if (empty($rating)) {
             return $response->setData([
@@ -494,13 +499,70 @@ class ResidoController extends PublicController
         $dataRating = [
             'summary_avg' => [
                 'cleanliness' => $rating['cleanliness_avg'],
-                'location' => $rating['location_avg'],
-                'service' => $rating['service_avg'],
-                'value' => $rating['value_avg'],
+                'location'    => $rating['location_avg'],
+                'service'     => $rating['service_avg'],
+                'value'       => $rating['value_avg'],
             ],
-            'star' => $rating['star'],
+            'star'        => $rating['star'],
         ];
 
         return $response->setData($dataRating)->toApiResponse();
+    }
+
+    /**
+     * @param Request           $request
+     * @param CategoryInterface $categoryRepository
+     * @param BaseHttpResponse  $response
+     * @return mixed
+     */
+    public function ajaxGetSubCategories(Request $request, CategoryInterface $categoryRepository, BaseHttpResponse $response)
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        $categories = $categoryRepository->allBy([
+            'parent_id' => $request->input('id')
+        ]);
+
+        return $response->setData($categories)->toApiResponse();
+    }
+
+    /**
+     * @param Request          $request
+     * @param StateInterface   $stateRepository
+     * @param BaseHttpResponse $response
+     * @return mixed
+     */
+    public function ajaxGetStatesByCountry(Request $request, StateInterface $stateRepository, BaseHttpResponse $response)
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        $states = $stateRepository->allBy([
+            'country_id' => $request->input('id')
+        ]);
+
+        return $response->setData($states)->toApiResponse();
+    }
+
+    /**
+     * @param Request          $request
+     * @param CityInterface    $cityRepository
+     * @param BaseHttpResponse $response
+     * @return mixed
+     */
+    public function ajaxGetCitiesByState(Request $request, CityInterface $cityRepository, BaseHttpResponse $response)
+    {
+        if (!$request->ajax()) {
+            abort(404);
+        }
+
+        $cities = $cityRepository->allBy([
+            'state_id' => $request->input('id')
+        ]);
+
+        return $response->setData($cities)->toApiResponse();
     }
 }

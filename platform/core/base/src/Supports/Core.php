@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Menu;
+use Theme;
 use ZipArchive;
 
 class Core
@@ -199,21 +200,28 @@ class Core
             'verify_type'  => $this->verifyType,
         ];
 
-        $response = $this->callApi($this->apiUrl . '/api/activate_license', $data);
+        try {
+            $response = $this->callApi($this->apiUrl . '/api/activate_license', $data);
 
-        if (!empty($createLicense)) {
-            if ($response['status']) {
-                $license = trim($response['lic_response']);
-                file_put_contents($this->licenseFile, $license, LOCK_EX);
-            } else {
-                @chmod($this->licenseFile, 0777);
-                if (is_writeable($this->licenseFile)) {
-                    unlink($this->licenseFile);
+            if (!empty($createLicense)) {
+                if ($response['status']) {
+                    $license = trim($response['lic_response']);
+                    file_put_contents($this->licenseFile, $license, LOCK_EX);
+                } else {
+                    @chmod($this->licenseFile, 0777);
+                    if (is_writeable($this->licenseFile)) {
+                        unlink($this->licenseFile);
+                    }
                 }
             }
-        }
 
-        return $response;
+            return $response;
+        } catch (Exception $exception) {
+            return [
+                'status' => false,
+                'message' => $exception->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -478,7 +486,7 @@ class Core
                     }
                 } else {
                     $archive = new Zip($destination);
-                    $archive->extract(PCLZIP_OPT_PATH, $this->rootPath . '/', PCLZIP_OPT_REMOVE_ALL_PATH);
+                    $archive->extract(PCLZIP_OPT_PATH, $this->rootPath . '/');
 
                     unlink($destination);
                     echo 'Main update files downloaded and extracted.<br><br>';
@@ -525,6 +533,14 @@ class Core
                             $migrator->run($modulePath . '/database/migrations');
                         }
                     }
+                }
+
+                File::delete(theme_path(Theme::getThemeName() . '/public/css/style.integration.css'));
+
+                $customCSS = Theme::getStyleIntegrationPath();
+
+                if (File::exists($customCSS)) {
+                    File::copy($customCSS, storage_path('app/style.integration.css.' . time()));
                 }
 
                 app(ThemeService::class)->publishAssets();

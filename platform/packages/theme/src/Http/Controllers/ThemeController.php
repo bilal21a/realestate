@@ -28,6 +28,10 @@ class ThemeController extends BaseController
      */
     public function index()
     {
+        if (!config('packages.theme.general.display_theme_manager_in_admin_panel', true)) {
+            abort(404);
+        }
+
         page_title()->setTitle(trans('packages/theme::theme.name'));
 
         if (File::exists(theme_path('.DS_Store'))) {
@@ -95,6 +99,10 @@ class ThemeController extends BaseController
      */
     public function postActivateTheme(Request $request, BaseHttpResponse $response, ThemeService $themeService)
     {
+        if (!config('packages.theme.general.display_theme_manager_in_admin_panel', true)) {
+            abort(404);
+        }
+
         $result = $themeService->activate($request->input('theme'));
 
         if ($result['error']) {
@@ -137,7 +145,9 @@ class ThemeController extends BaseController
      */
     public function postCustomCss(CustomCssRequest $request, BaseHttpResponse $response)
     {
-        $file = public_path('themes/' . Theme::getThemeName() . '/css/style.integration.css');
+        File::delete(theme_path(Theme::getThemeName() . '/public/css/style.integration.css'));
+
+        $file = Theme::getStyleIntegrationPath();
         $css = $request->input('custom_css');
         $css = strip_tags($css);
 
@@ -217,6 +227,10 @@ class ThemeController extends BaseController
      */
     public function postRemoveTheme(Request $request, BaseHttpResponse $response, ThemeService $themeService)
     {
+        if (!config('packages.theme.general.display_theme_manager_in_admin_panel', true)) {
+            abort(404);
+        }
+
         $theme = strtolower($request->input('theme'));
 
         if (in_array($theme, scan_folder(theme_path()))) {

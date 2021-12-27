@@ -425,7 +425,7 @@ class DashboardWidgetInstance
             $data = [
                 'id'   => $widget->id,
                 'type' => $this->type,
-                'view' => view('core/dashboard::widgets.base', compact('widget', 'settings', 'predefinedRanges'))->render(),
+                'view' => view('core/dashboard::widgets.base', compact('widget', 'widgetSetting', 'settings', 'predefinedRanges'))->render(),
             ];
 
             if (empty($widgetSetting) || array_key_exists($widgetSetting->order, $widgets)) {

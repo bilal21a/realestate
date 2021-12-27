@@ -230,8 +230,12 @@ class PropertyRepository extends RepositoriesAbstract implements PropertyInterfa
                 });
         }
 
-        if ($filters['category_id'] !== null) {
+        if (!empty($filters['category_id'])) {
             $this->model = $this->model->where('re_properties.category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['subcategory_id'])) {
+            $this->model = $this->model->where('re_properties.subcategory_id', $filters['subcategory_id']);
         }
 
         if ($filters['features'] !== null) {
@@ -240,14 +244,24 @@ class PropertyRepository extends RepositoriesAbstract implements PropertyInterfa
             });
         }
 
-        if ($filters['city_id']) {
+        if (!empty($filters['city_id'])) {
             $this->model = $this->model->where('re_properties.city_id', $filters['city_id']);
-        } elseif ($filters['location']) {
+        }
+
+        if (!empty($filters['state_id'])) {
+            $this->model = $this->model->where('state_id', $filters['state_id']);
+        }
+
+        if (!empty($filters['country_id'])) {
+            $this->model = $this->model->where('country_id', $filters['country_id']);
+        }
+
+        if ($filters['location']) {
             $locationData = explode(',', $filters['location']);
             if (count($locationData) > 1) {
                 $this->model = $this->model
-                    ->join('cities', 'cities.id', '=', 're_properties.city_id')
-                    ->join('states', 'states.id', '=', 'cities.state_id')
+                    ->leftJoin('cities', 'cities.id', '=', 're_properties.city_id')
+                    ->leftJoin('states', 'states.id', '=', 'cities.state_id')
                     ->where(function ($query) use ($locationData) {
                         return $query
                             ->where('cities.name', 'LIKE', '%' . trim($locationData[0]) . '%')
@@ -255,8 +269,8 @@ class PropertyRepository extends RepositoriesAbstract implements PropertyInterfa
                     });
             } else {
                 $this->model = $this->model
-                    ->join('cities', 'cities.id', '=', 're_properties.city_id')
-                    ->join('states', 'states.id', '=', 'cities.state_id')
+                    ->leftJoin('cities', 'cities.id', '=', 're_properties.city_id')
+                    ->leftJoin('states', 'states.id', '=', 'cities.state_id')
                     ->where(function ($query) use ($filters) {
                         return $query
                             ->where('cities.name', 'LIKE', '%' . trim($filters['location']) . '%')

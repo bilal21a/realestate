@@ -249,7 +249,7 @@ class BaseServiceProvider extends ServiceProvider
         // Set memory limits.
         $limitInt = Helper::convertHrToBytes($memoryLimit);
         if (-1 !== $currentLimitInt && (-1 === $limitInt || $limitInt > $currentLimitInt)) {
-            ini_set('memory_limit', $memoryLimit);
+            @ini_set('memory_limit', $memoryLimit);
         }
     }
 

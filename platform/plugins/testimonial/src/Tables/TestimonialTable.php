@@ -2,6 +2,7 @@
 
 namespace Botble\Testimonial\Tables;
 
+use BaseHelper;
 use Botble\Table\Abstracts\TableAbstract;
 use Botble\Testimonial\Repositories\Interfaces\TestimonialInterface;
 use Html;
@@ -64,7 +65,7 @@ class TestimonialTable extends TableAbstract
                 return $this->getCheckbox($item->id);
             })
             ->editColumn('created_at', function ($item) {
-                return date_from_database($item->created_at, config('core.base.general.date_format.date'));
+                return BaseHelper::formatDate($item->created_at);
             })
             ->addColumn('operations', function ($item) {
                 return table_actions('testimonial.edit', 'testimonial.destroy', $item);
@@ -79,10 +80,10 @@ class TestimonialTable extends TableAbstract
     public function query()
     {
         $query = $this->repository->getModel()->select([
-            'testimonials.id',
-            'testimonials.name',
-            'testimonials.created_at',
-            'testimonials.image',
+            'id',
+            'name',
+            'created_at',
+            'image',
         ]);
 
         return $this->applyScopes($query);
@@ -95,22 +96,18 @@ class TestimonialTable extends TableAbstract
     {
         return [
             'id'         => [
-                'name'  => 'testimonials.id',
                 'title' => trans('core/base::tables.id'),
                 'width' => '20px',
             ],
             'image'      => [
-                'name'  => 'testimonials.image',
                 'title' => trans('core/base::tables.image'),
                 'width' => '100px',
             ],
             'name'       => [
-                'name'  => 'testimonials.name',
                 'title' => trans('core/base::tables.name'),
                 'class' => 'text-start',
             ],
             'created_at' => [
-                'name'  => 'testimonials.created_at',
                 'title' => trans('core/base::tables.created_at'),
                 'width' => '100px',
             ],
@@ -139,12 +136,12 @@ class TestimonialTable extends TableAbstract
     public function getBulkChanges(): array
     {
         return [
-            'testimonials.name'       => [
+            'name'       => [
                 'title'    => trans('core/base::tables.name'),
                 'type'     => 'text',
                 'validate' => 'required|max:120',
             ],
-            'testimonials.created_at' => [
+            'created_at' => [
                 'title' => trans('core/base::tables.created_at'),
                 'type'  => 'date',
             ],

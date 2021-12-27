@@ -171,8 +171,7 @@ class SystemController extends Controller
             return $response;
         }
 
-        $response
-            ->setData(['has_new_version' => false]);
+        $response->setData(['has_new_version' => false]);
 
         $api = new Core;
 
@@ -197,6 +196,9 @@ class SystemController extends Controller
         }
 
         header('Cache-Control: no-cache');
+
+        @ini_set('max_execution_time', -1);
+        @ini_set('memory_limit', -1);
 
         page_title()->setTitle(trans('core/base::system.updater'));
 

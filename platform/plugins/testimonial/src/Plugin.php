@@ -10,5 +10,6 @@ class Plugin extends PluginOperationAbstract
     public static function remove()
     {
         Schema::dropIfExists('testimonials');
+        Schema::dropIfExists('testimonials_translations');
     }
 }

@@ -56,10 +56,10 @@ class CategoryTable extends TableAbstract
             ->of($this->query())
             ->editColumn('name', function ($item) {
                 if (!Auth::user()->hasPermission('categories.edit')) {
-                    return $item->name;
+                    return clean($item->name);
                 }
 
-                return Html::link(route('categories.edit', $item->id), $item->indent_text . ' ' . $item->name);
+                return Html::link(route('categories.edit', $item->id), $item->indent_text . ' ' . clean($item->name));
             })
             ->editColumn('checkbox', function ($item) {
                 return $this->getCheckbox($item->id);
@@ -74,7 +74,8 @@ class CategoryTable extends TableAbstract
                 if ($this->request()->input('action') === 'excel') {
                     return $item->status->getValue();
                 }
-                return $item->status->toHtml();
+
+                return clean($item->status->toHtml());
             })
             ->addColumn('operations', function ($item) {
                 return view('plugins/blog::categories.actions', compact('item'))->render();

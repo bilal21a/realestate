@@ -31,7 +31,7 @@
                 </li>
                 @endif
                 @if ($property->category)
-                <li><strong>{{ __('Property Type:') }}</strong>{{ $property->category_name }}</li>
+                <li><strong>{{ __('Property Type:') }}</strong>{{ $property->category_name }} {{ !empty($property->subcategory_id) ? ' , ' . $property->subcategory->name : '' }}</li>
                 @endif
             </ul>
         </div>

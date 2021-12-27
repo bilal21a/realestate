@@ -21,10 +21,21 @@ class NewsletterRequest extends Request
             'status' => Rule::in(NewsletterStatusEnum::values()),
         ];
 
-        if (setting('enable_captcha') && is_plugin_active('captcha')) {
+        if (is_plugin_active('captcha') && setting('enable_captcha')) {
             $rules += ['g-recaptcha-response' => 'required|captcha'];
         }
 
         return $rules;
+    }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'g-recaptcha-response.required' => __('Captcha Verification Failed!'),
+            'g-recaptcha-response.captcha'  => __('Captcha Verification Failed!'),
+        ];
     }
 }

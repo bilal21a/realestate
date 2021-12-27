@@ -58,8 +58,8 @@ class CategoryRepository extends RepositoriesAbstract implements CategoryInterfa
 
         $data = $data
             ->where('status', BaseStatusEnum::PUBLISHED)
-            ->orderBy('created_at', 'DESC')
-            ->orderBy('order', 'DESC');
+            ->orderBy('order', 'DESC')
+            ->orderBy('created_at', 'DESC');
 
         if ($with) {
             $data = $data->with($with);

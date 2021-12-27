@@ -3,6 +3,9 @@
 use Botble\Base\Models\BaseModel;
 use Botble\Base\Models\MetaBox as MetaBoxModel;
 use Botble\Location\Models\City;
+use Botble\Location\Repositories\Interfaces\CityInterface;
+use Botble\Location\Repositories\Interfaces\CountryInterface;
+use Botble\Location\Repositories\Interfaces\StateInterface;
 use Botble\RealEstate\Enums\ModerationStatusEnum;
 use Botble\RealEstate\Models\Property;
 use Botble\RealEstate\Repositories\Interfaces\FeatureInterface;
@@ -139,7 +142,7 @@ app()->booted(function () {
         }, 28, 2);
 
         add_action(BASE_ACTION_AFTER_CREATE_CONTENT, function ($type, $request, $object) use ($videoSupportModels) {
-            if (in_array(get_class($object), $videoSupportModels)) {
+            if (in_array(get_class($object), $videoSupportModels) && $request->has('video')) {
                 $data = Arr::only((array)$request->input('video', []), ['url']);
                 if (!empty($request->input('video_thumbnail'))) {
                     $data['thumbnail'] = $request->input('video_thumbnail');
@@ -158,7 +161,7 @@ app()->booted(function () {
         }, 280, 3);
 
         add_action(BASE_ACTION_AFTER_UPDATE_CONTENT, function ($type, $request, $object) use ($videoSupportModels) {
-            if (in_array(get_class($object), $videoSupportModels)) {
+            if (in_array(get_class($object), $videoSupportModels) && $request->has('video')) {
                 $data = Arr::only((array)$request->input('video', []), ['url']);
                 if (!empty($request->input('video_thumbnail'))) {
                     $data['thumbnail'] = $request->input('video_thumbnail');
@@ -253,7 +256,7 @@ app()->booted(function () {
 
         function save_addition_property_fields($type, $request, $object)
         {
-            if (get_class($object) == Property::class) {
+            if (get_class($object) == Property::class && $request->has('header_layout')) {
                 MetaBox::saveMetaBoxData($object, 'header_layout', $request->input('header_layout'));
             }
         }
@@ -325,13 +328,13 @@ if (is_plugin_active('location')) {
     }
 
     add_action(BASE_ACTION_AFTER_CREATE_CONTENT, function ($type, $request, $object) {
-        if (get_class($object) == City::class) {
+        if (get_class($object) == City::class && $request->has('image')) {
             MetaBox::saveMetaBoxData($object, 'image', $request->input('image'));
         }
     }, 230, 3);
 
     add_action(BASE_ACTION_AFTER_UPDATE_CONTENT, function ($type, $request, $object) {
-        if (get_class($object) == City::class) {
+        if (get_class($object) == City::class && $request->has('image')) {
             MetaBox::saveMetaBoxData($object, 'image', $request->input('image'));
         }
     }, 231, 3);
@@ -445,4 +448,47 @@ function addLoginOptionsByTheme($html)
 function get_image_loading()
 {
     return RvMedia::getImageUrl(theme_option('img_loading'));
+}
+
+if (!function_exists('get_countries')) {
+    function get_countries()
+    {
+        return app(CountryInterface::class)->all();
+    }
+}
+
+if (!function_exists('get_states_by_country')) {
+    function get_states_by_country($countryId)
+    {
+        return app(StateInterface::class)->allBy([
+            'country_id' => $countryId
+        ]);
+    }
+}
+
+if (!function_exists('get_cities_by_state')) {
+    function get_cities_by_state($stateId)
+    {
+        return app(CityInterface::class)->allBy([
+            'state_id' => $stateId
+        ]);
+    }
+}
+
+if (!function_exists('get_re_categories')) {
+    function get_re_categories($parentId = 0)
+    {
+        return app(Botble\RealEstate\Repositories\Interfaces\CategoryInterface::class)
+            ->allBy([
+                'parent_id' => $parentId
+            ]);
+    }
+}
+
+if (!function_exists('get_re_category')) {
+    function get_re_category($id)
+    {
+        return app(Botble\RealEstate\Repositories\Interfaces\CategoryInterface::class)
+            ->findById($id);
+    }
 }

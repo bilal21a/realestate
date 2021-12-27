@@ -252,6 +252,8 @@
                 });
             });
 
+            $(document).find('.table-check-all').closest('th').removeAttr('title');
+
             $(document).on('change', '.checkboxes', event => {
                 let _self = $(event.currentTarget);
                 let table = _self.closest('.table-wrapper').find('.table').prop('id');

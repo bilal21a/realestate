@@ -4,13 +4,13 @@ namespace Botble\Block\Providers;
 
 use Botble\Base\Traits\LoadAndPublishDataTrait;
 use Botble\Block\Models\Block;
+use Botble\LanguageAdvanced\Supports\LanguageAdvancedManager;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\ServiceProvider;
 use Botble\Block\Repositories\Caches\BlockCacheDecorator;
 use Botble\Block\Repositories\Eloquent\BlockRepository;
 use Botble\Block\Repositories\Interfaces\BlockInterface;
-use Botble\Base\Supports\Helper;
 use Language;
 
 class BlockServiceProvider extends ServiceProvider
@@ -22,14 +22,14 @@ class BlockServiceProvider extends ServiceProvider
         $this->app->bind(BlockInterface::class, function () {
             return new BlockCacheDecorator(new BlockRepository(new Block));
         });
-
-        Helper::autoload(__DIR__ . '/../../helpers');
     }
 
     public function boot()
     {
-        $this->setNamespace('plugins/block')
-            ->loadAndPublishConfigurations(['permissions'])
+        $this
+            ->setNamespace('plugins/block')
+            ->loadHelpers()
+            ->loadAndPublishConfigurations(['permissions', 'general'])
             ->loadAndPublishTranslations()
             ->loadRoutes(['web'])
             ->loadAndPublishViews()
@@ -47,11 +47,24 @@ class BlockServiceProvider extends ServiceProvider
             ]);
         });
 
-        $this->app->booted(function () {
-            if (defined('LANGUAGE_MODULE_SCREEN_NAME')) {
-                Language::registerModule([Block::class]);
-            }
+        $useLanguageV2 = $this->app['config']->get('plugins.block.general.use_language_v2', false) &&
+            defined('LANGUAGE_ADVANCED_MODULE_SCREEN_NAME');
 
+        if (defined('LANGUAGE_MODULE_SCREEN_NAME')) {
+            if ($useLanguageV2) {
+                LanguageAdvancedManager::registerModule(Block::class, [
+                    'name',
+                    'description',
+                    'content',
+                ]);
+            } else {
+                $this->app->booted(function () {
+                    Language::registerModule([Block::class]);
+                });
+            }
+        }
+
+        $this->app->booted(function () use ($useLanguageV2) {
             if (defined('CUSTOM_FIELD_MODULE_SCREEN_NAME')) {
                 \CustomField::registerModule(Block::class)
                     ->registerRule('basic', trans('plugins/block::block.name'), Block::class, function () {

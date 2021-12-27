@@ -9,21 +9,46 @@
     <!-- Find New Property -->
     <div class="sidebar-widgets">
         <form action="{{ route('public.properties') }}" method="get" id="filters-form">
-            <div class="form-group simple">
-                <div class="input-with-icon">
-                    {!! Theme::partial('real-estate.filters.input-search') !!}
+            @if(function_exists('is_search_country_sidebar'))
+                <div class="form-group simple">
+                    {!! Theme::partial('real-estate.filters.location_country') !!}
                 </div>
-            </div>
-            <div class="form-group simple">
-                {!! Theme::partial('real-estate.filters.cities') !!}
-            </div>
 
-
-            <div class="form-group simple">
-                <div class="simple-input">
-                    {!! Theme::partial('real-estate.filters.categories') !!}
+                <div class="form-group simple">
+                    {!! Theme::partial('real-estate.filters.location_state') !!}
                 </div>
-            </div>
+
+                <div class="form-group simple">
+                    {!! Theme::partial('real-estate.filters.location_city') !!}
+                </div>
+
+                <div class="form-group simple">
+                    <div class="simple-input">
+                        {!! Theme::partial('real-estate.filters.categories') !!}
+                    </div>
+                </div>
+
+                <div class="form-group simple">
+                    <div class="simple-input">
+                        {!! Theme::partial('real-estate.filters.sub_categories') !!}
+                    </div>
+                </div>
+            @else
+                <div class="form-group simple">
+                    <div class="input-with-icon">
+                        {!! Theme::partial('real-estate.filters.input-search') !!}
+                    </div>
+                </div>
+                <div class="form-group simple">
+                    {!! Theme::partial('real-estate.filters.cities') !!}
+                </div>
+
+                <div class="form-group simple">
+                    <div class="simple-input">
+                        {!! Theme::partial('real-estate.filters.categories') !!}
+                    </div>
+                </div>
+            @endif
 
             <div class="form-group simple">
                 <div class="simple-input">

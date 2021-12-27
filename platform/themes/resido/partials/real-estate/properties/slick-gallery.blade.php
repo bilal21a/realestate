@@ -3,7 +3,7 @@
         <div class="featured_slick_padd">
             <a href="{{ RvMedia::getImageUrl($image, null, false, RvMedia::getDefaultImage()) }}" class="mfp-gallery">
                 <img src="{{ RvMedia::getImageUrl($image, 'property_large', false, RvMedia::getDefaultImage()) }}"
-                    class="img-fluid mx-auto" alt="{{ $property->name }}-{{ $index }}" />
+                    class="img-fluid mx-auto" alt="{{ $property->name }}-{{ $index }}"  style="padding: 0px 4px;" />
             </a>
         </div>
     @endforeach

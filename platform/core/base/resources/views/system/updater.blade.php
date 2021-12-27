@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
         <h1 class="text-center" style="padding-top: 20px;">{{ trans('core/base::system.updater') }}</h1><br>
-        <div class="updater-box">
+        <div class="updater-box" dir="ltr">
             <div class="note note-warning">
                 <p>- Please backup your database and script files before upgrading.</p>
                 <p>- You need to activate your license before doing upgrade.</p>

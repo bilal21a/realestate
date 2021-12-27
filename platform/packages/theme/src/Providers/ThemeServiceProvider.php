@@ -64,16 +64,22 @@ class ThemeServiceProvider extends ServiceProvider
                     'icon'        => 'fa fa-paint-brush',
                     'url'         => '#',
                     'permissions' => [],
-                ])
-                ->registerItem([
-                    'id'          => 'cms-core-theme',
-                    'priority'    => 1,
-                    'parent_id'   => 'cms-core-appearance',
-                    'name'        => 'packages/theme::theme.name',
-                    'icon'        => null,
-                    'url'         => route('theme.index'),
-                    'permissions' => ['theme.index'],
-                ])
+                ]);
+
+            if ($this->app['config']->get('packages.theme.general.display_theme_manager_in_admin_panel', true)) {
+                dashboard_menu()
+                    ->registerItem([
+                        'id'          => 'cms-core-theme',
+                        'priority'    => 1,
+                        'parent_id'   => 'cms-core-appearance',
+                        'name'        => 'packages/theme::theme.name',
+                        'icon'        => null,
+                        'url'         => route('theme.index'),
+                        'permissions' => ['theme.index'],
+                    ]);
+            }
+
+            dashboard_menu()
                 ->registerItem([
                     'id'          => 'cms-core-theme-option',
                     'priority'    => 4,
@@ -112,12 +118,12 @@ class ThemeServiceProvider extends ServiceProvider
         });
 
         $this->app->booted(function () {
-            $file = public_path(ThemeFacade::path() . '/css/style.integration.css');
+            $file = ThemeFacade::getStyleIntegrationPath();
             if (File::exists($file)) {
                 ThemeFacade::asset()
                     ->container('after_header')
                     ->usePath()
-                    ->add('theme-style-integration-css', 'css/style.integration.css', [], [], filectime($file));
+                    ->add('theme-style-integration-css', str_replace(public_path(ThemeFacade::path()), '', $file), [], [], filectime($file));
             }
 
             if (config('packages.theme.general.enable_custom_js')) {

@@ -203,7 +203,7 @@ class Backup
     {
         $file = $this->folder . DIRECTORY_SEPARATOR . 'storage-' . now()->format('Y-m-d-H-i-s') . '.zip';
 
-        ini_set('max_execution_time', 5000);
+        @ini_set('max_execution_time', -1);
 
         if (class_exists('ZipArchive', false)) {
             $zip = new ZipArchive;
@@ -329,7 +329,7 @@ class Backup
         }
 
         $archive = new Zip($fileName);
-        $archive->extract(PCLZIP_OPT_PATH, $pathTo, PCLZIP_OPT_REMOVE_ALL_PATH);
+        $archive->extract(PCLZIP_OPT_PATH, $pathTo);
 
         return true;
     }

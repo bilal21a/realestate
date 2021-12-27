@@ -292,7 +292,9 @@ class TranslationController extends BaseController
     {
         page_title()->setTitle(trans('plugins/translation::translation.theme-translations'));
 
-        Assets::addScriptsDirectly('vendor/core/plugins/translation/js/theme-translations.js')
+        Assets::addScripts(['bootstrap-editable'])
+            ->addStyles(['bootstrap-editable'])
+            ->addScriptsDirectly('vendor/core/plugins/translation/js/theme-translations.js')
             ->addStylesDirectly('vendor/core/plugins/translation/css/theme-translations.css');
 
         $groups = Language::getAvailableLocales();
@@ -346,29 +348,31 @@ class TranslationController extends BaseController
      */
     public function postThemeTranslations(Request $request, BaseHttpResponse $response)
     {
-        $translations = $request->input('translations', []);
-
-        if (is_string($translations)) {
-            $translations = json_decode($translations, true);
-        }
-
-        $json = [];
-
-        foreach ($translations as $translation) {
-            $json[$translation['key']] = $translation['value'];
-        }
-
         if (!File::isWritable(resource_path('lang'))) {
             return $response
                 ->setError(true)
                 ->setMessage(trans('plugins/translation::translation.folder_is_not_writeable'));
         }
 
-        ksort($json);
+        $locale = $request->input('pk');
 
-        $jsonFile = resource_path('lang/' . $request->input('locale') . '.json');
+        $translations = [];
 
-        File::put($jsonFile, json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $jsonFile = resource_path('lang/' . $locale . '.json');
+
+        if (!File::exists($jsonFile)) {
+            $jsonFile = theme_path(Theme::getThemeName() . '/lang/' . $locale . '.json');
+        }
+
+        if (File::exists($jsonFile)) {
+            $translations = get_file_data($jsonFile, true);
+        }
+
+        ksort($translations);
+
+        $translations[$request->input('name')] = $request->input('value');
+
+        File::put(resource_path('lang/' . $locale . '.json'), json_encode($translations, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         return $response
             ->setPreviousUrl(route('translations.theme-translations'))
@@ -383,7 +387,7 @@ class TranslationController extends BaseController
     {
         $file = RvMedia::getUploadPath() . '/locale-' . $locale . '.zip';
 
-        ini_set('max_execution_time', 5000);
+        @ini_set('max_execution_time', -1);
 
         if (class_exists('ZipArchive', false)) {
             $zip = new ZipArchive;

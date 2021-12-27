@@ -73,10 +73,10 @@ class PostTable extends TableAbstract
             ->eloquent($this->query())
             ->editColumn('name', function ($item) {
                 if (!Auth::user()->hasPermission('posts.edit')) {
-                    return $item->name;
+                    return clean($item->name);
                 }
 
-                return Html::link(route('posts.edit', $item->id), $item->name);
+                return Html::link(route('posts.edit', $item->id), clean($item->name));
             })
             ->editColumn('image', function ($item) {
                 return $this->displayThumbnail($item->image);
@@ -96,14 +96,14 @@ class PostTable extends TableAbstract
                 return rtrim($categories, ', ');
             })
             ->editColumn('author_id', function ($item) {
-                return $item->author ? $item->author->name : null;
+                return $item->author && $item->author->name ? clean($item->author->name) : '&mdash;';
             })
             ->editColumn('status', function ($item) {
                 if ($this->request()->input('action') === 'excel') {
                     return $item->status->getValue();
                 }
 
-                return $item->status->toHtml();
+                return clean($item->status->toHtml());
             })
             ->addColumn('operations', function ($item) {
                 return $this->getOperations('posts.edit', 'posts.destroy', $item);

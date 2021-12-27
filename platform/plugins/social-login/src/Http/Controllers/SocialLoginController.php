@@ -198,7 +198,7 @@ class SocialLoginController extends BaseController
         $setting->set($prefix . 'enable', $request->input($prefix . 'enable'));
 
         foreach (SocialService::getProviders() as $provider => $item) {
-            $prefix .= $provider . '_';
+            $prefix = 'social_login_' . $provider . '_';
 
             $setting->set($prefix . 'enable', $request->input($prefix . 'enable'));
 

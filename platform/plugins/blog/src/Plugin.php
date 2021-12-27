@@ -19,6 +19,9 @@ class Plugin extends PluginOperationAbstract
         Schema::dropIfExists('posts');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('tags');
+        Schema::dropIfExists('posts_translations');
+        Schema::dropIfExists('categories_translations');
+        Schema::dropIfExists('tags_translations');
 
         app(DashboardWidgetInterface::class)->deleteBy(['name' => 'widget_posts_recent']);
 

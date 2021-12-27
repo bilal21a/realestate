@@ -54,7 +54,7 @@ class TagTable extends TableAbstract
                     return $item->name;
                 }
 
-                return Html::link(route('tags.edit', $item->id), $item->name);
+                return Html::link(route('tags.edit', $item->id), clean($item->name));
             })
             ->editColumn('checkbox', function ($item) {
                 return $this->getCheckbox($item->id);
@@ -66,7 +66,8 @@ class TagTable extends TableAbstract
                 if ($this->request()->input('action') === 'excel') {
                     return $item->status->getValue();
                 }
-                return $item->status->toHtml();
+
+                return clean($item->status->toHtml());
             })
             ->addColumn('operations', function ($item) {
                 return $this->getOperations('tags.edit', 'tags.destroy', $item);

@@ -1217,4 +1217,57 @@ class LanguageManager
 
         return $showRelated ? $this->getLocalizedURL($localeCode) : url($localeCode);
     }
+
+    /**
+     * Returns serialized translated routes for caching purposes.
+     *
+     * @return string
+     */
+    public function getSerializedTranslatedRoutes()
+    {
+        return base64_encode(serialize($this->translatedRoutes));
+    }
+
+    /**
+     * Sets the translated routes list.
+     * Only useful from a cached routes context.
+     *
+     * @param string $serializedRoutes
+     */
+    public function setSerializedTranslatedRoutes($serializedRoutes)
+    {
+        if (!$serializedRoutes) {
+            return;
+        }
+
+        $this->translatedRoutes = unserialize(base64_decode($serializedRoutes));
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function setRoutesCachePath(): string
+    {
+        $this->setLocale();
+
+        // compute $locale from url.
+        // It is null if url does not contain locale.
+        $locale = $this->getCurrentLocale();
+
+        $localeKeys = $this->getSupportedLocales();
+
+        $path = $this->app->getCachedRoutesPath();
+
+        if ($locale && !in_array($locale, $localeKeys) && (!$this->hideDefaultLocaleInURL() || $locale != $this->getDefaultLocale())) {
+
+            $path = substr($path, 0, -4) . '_' . $locale . '.php';
+
+            if (file_exists($path)) {
+                putenv('APP_ROUTES_CACHE=' . $path);
+            }
+        }
+
+        return $path;
+    }
 }

@@ -14,7 +14,10 @@ Route::group(['namespace' => 'Theme\Resido\Http\Controllers', 'middleware' => ['
 
         Route::get('wishlist', 'ResidoController@getWishlist')->name('public.wishlist');
 
+        Route::get('ajax/stateses-by-country', 'ResidoController@ajaxGetStatesByCountry')->name('public.ajax.stateses-by-country');
+        Route::get('ajax/cities-by-state', 'ResidoController@ajaxGetCitiesByState')->name('public.ajax.cities-by-state');
         Route::get('ajax/cities', 'ResidoController@ajaxGetCities')->name('public.ajax.cities');
+
         Route::get('ajax/properties', 'ResidoController@ajaxGetProperties')->name('public.ajax.properties');
         Route::get('ajax/posts', 'ResidoController@ajaxGetPosts')->name('public.ajax.posts');
         Route::post('ajax/properties/map', 'ResidoController@ajaxGetPropertiesForMap')
@@ -29,6 +32,8 @@ Route::group(['namespace' => 'Theme\Resido\Http\Controllers', 'middleware' => ['
             ->name('public.ajax.real-estate-reviews');
         Route::get('ajax/real-estate-rating/{id}', 'ResidoController@ajaxGetRealEstateRating')
             ->name('public.ajax.real-estate-rating');
+
+        Route::get('ajax/sub-categories', 'ResidoController@ajaxGetSubCategories')->name('public.ajax.sub-categories');
     });
 });
 

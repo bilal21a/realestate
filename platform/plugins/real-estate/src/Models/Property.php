@@ -5,6 +5,8 @@ namespace Botble\RealEstate\Models;
 use Botble\Base\Models\BaseModel;
 use Botble\Base\Traits\EnumCastable;
 use Botble\Location\Models\City;
+use Botble\Location\Models\Country;
+use Botble\Location\Models\State;
 use Botble\RealEstate\Enums\ModerationStatusEnum;
 use Botble\RealEstate\Enums\PropertyPeriodEnum;
 use Botble\RealEstate\Enums\PropertyTypeEnum;
@@ -44,11 +46,14 @@ class Property extends BaseModel
         'price',
         'is_featured',
         'currency_id',
+        'country_id',
+        'state_id',
         'city_id',
         'period',
         'author_id',
         'author_type',
         'category_id',
+        'subcategory_id',
         'expire_date',
         'auto_renew',
         'latitude',
@@ -139,6 +144,22 @@ class Property extends BaseModel
     /**
      * @return BelongsTo
      */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class)->withDefault();
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function state(): BelongsTo
+    {
+        return $this->belongsTo(State::class)->withDefault();
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class)->withDefault();
@@ -158,6 +179,14 @@ class Property extends BaseModel
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id')->withDefault();
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function subcategory(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'subcategory_id')->withDefault();
     }
 
     /**

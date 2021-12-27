@@ -546,7 +546,7 @@ return [
     'purifier'  => [
         'default' => [
             'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'div,b,strong,i,em,u,a[href|title|rel|style|target],ul,ol,li,p[style],br,span[style],img[width|height|alt|src|style],button',
+            'HTML.Allowed'             => 'div,b,strong,i,em,u,a[href|title|rel|style|target],ul,ol,li,p[style],br,span[style],img[width|height|alt|src|style],button,ins[style|data-ad-client|data-ad-slot|data-ad-format|data-full-width-responsive]',
             'HTML.AllowedElements'     => [
                 'a',
                 'b',
@@ -597,6 +597,7 @@ return [
                 'del',
                 'div',
                 'button',
+                'ins',
             ],
             'HTML.SafeIframe'          => 'true',
             // Add to .env if you want to allow all.
@@ -631,13 +632,19 @@ return [
             'AutoFormat.AutoParagraph' => false,
             'AutoFormat.RemoveEmpty'   => false,
         ],
-        'custom_elements' => [
+        'custom_elements'   => [
             ['u', 'Inline', 'Inline', 'Common'],
             ['button', 'Inline', 'Inline', 'Common'],
+            ['ins', 'Inline', 'Inline', 'Common'],
         ],
         'custom_attributes' => [
             ['a', 'rel', 'Text'],
+            ['ins', 'data-ad-client', 'Text'],
+            ['ins', 'data-ad-slot', 'Text'],
+            ['ins', 'data-ad-format', 'Text'],
+            ['ins', 'data-ad-full-width-responsive', 'Text'],
         ],
     ],
-    'enable_system_updater' => env('CMS_ENABLE_SYSTEM_UPDATER', true),
+    'enable_system_updater'  => env('CMS_ENABLE_SYSTEM_UPDATER', true),
+    'phone_validation_rule'  => env('CMS_PHONE_VALIDATION_RULE', 'min:8|max:15|regex:/^([0-9\s\-\+\(\)]*)$/'),
 ];

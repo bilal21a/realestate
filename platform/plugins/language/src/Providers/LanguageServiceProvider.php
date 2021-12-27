@@ -171,7 +171,7 @@ class LanguageServiceProvider extends ServiceProvider
             }, 1);
 
             add_filter(BASE_FILTER_BEFORE_RENDER_FORM, function ($form, $data) {
-                if (is_in_admin() && Language::getCurrentAdminLocaleCode() != Language::getDefaultLocaleCode() && in_array(get_class($data), Language::supportedModels())) {
+                if (is_in_admin() && Language::getCurrentAdminLocaleCode() != Language::getDefaultLocaleCode() && in_array(get_class($data), Language::supportedModels()) && $form) {
 
                     $refLang = request()->input('ref_lang');
                     $refFrom = request()->input('ref_from');
@@ -188,6 +188,8 @@ class LanguageServiceProvider extends ServiceProvider
                 return $form;
             }, 1134, 2);
         }
+
+        Language::setRoutesCachePath();
     }
 
     /**

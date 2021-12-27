@@ -75,4 +75,5 @@ return [
     'cms_version'                     => 'CMS Version',
     'imagick_or_gd_ext'               => 'Imagick/GD Ext',
     'updater'                         => 'System Updater',
+    'zip'                             => 'Zip Ext',
 ];

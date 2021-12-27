@@ -14,7 +14,9 @@ use Botble\Language\LanguageManager;
 use Botble\Language\Models\LanguageMeta;
 use Botble\Language\Repositories\Interfaces\LanguageInterface;
 use Botble\Language\Repositories\Interfaces\LanguageMetaInterface;
+use Botble\Setting\Models\Setting;
 use Botble\Setting\Supports\SettingStore;
+use Botble\Widget\Models\Widget;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use File;
@@ -23,6 +25,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
+use Language as LanguageFacade;
 use Theme;
 use Throwable;
 
@@ -116,6 +119,8 @@ class LanguageController extends BaseController
 
             $language = $this->languageRepository->createOrUpdate($request->except('lang_id'));
 
+            $this->clearRoutesCache();
+
             event(new CreatedContentEvent(LANGUAGE_MODULE_SCREEN_NAME, $request, $language));
 
             try {
@@ -184,6 +189,8 @@ class LanguageController extends BaseController
 
             $language->fill($request->input());
             $language = $this->languageRepository->createOrUpdate($language);
+
+            $this->clearRoutesCache();
 
             event(new UpdatedContentEvent(LANGUAGE_MODULE_SCREEN_NAME, $request, $language));
 
@@ -272,6 +279,8 @@ class LanguageController extends BaseController
                 }
             }
 
+            $this->clearRoutesCache();
+
             event(new DeletedContentEvent(LANGUAGE_MODULE_SCREEN_NAME, $request, $language));
 
             return $response
@@ -291,12 +300,58 @@ class LanguageController extends BaseController
      */
     public function getSetDefault(Request $request, BaseHttpResponse $response)
     {
+        $defaultLanguage = LanguageFacade::getDefaultLanguage(['lang_id', 'lang_code']);
+
         $this->languageRepository->update(['lang_is_default' => 1], ['lang_is_default' => 0]);
+
         $language = $this->languageRepository->getFirstBy(['lang_id' => $request->input('lang_id')]);
         if ($language) {
             $language->lang_is_default = 1;
             $this->languageRepository->createOrUpdate($language);
         }
+
+        try {
+            if ($defaultLanguage->lang_id != $request->input('lang_id')) {
+                $widgets = Widget::where('theme', 'NOT LIKE', '%-' . $language->lang_code)->get();
+
+                foreach ($widgets as $widget) {
+                    $widget->theme = $widget->theme . '-' . $defaultLanguage->lang_code;
+                    $widget->save();
+                }
+
+                $widgets = Widget::where('theme', 'LIKE', '%-' . $language->lang_code)->get();
+
+                foreach ($widgets as $widget) {
+                    $widget->theme = str_replace('-' . $language->lang_code, '', $widget->theme);
+                    $widget->save();
+                }
+
+                $themeName = Theme::getThemeName();
+
+                $themeOptions = Setting::where('key', 'NOT LIKE', 'theme-' . $themeName . '-' . $language->lang_code . '-%')->get();
+
+                foreach ($themeOptions as $themeOption) {
+                    $themeOption->key = str_replace('theme-' . $themeName . '-', 'theme-' . $themeName . '-' . $defaultLanguage->lang_code . '-', $themeOption->key);
+                    if (!Setting::where('key', $themeOption->key)->count()) {
+                        $themeOption->save();
+                    }
+                }
+
+                $themeOptions = Setting::where('key', 'LIKE', 'theme-' . $themeName . '-' . $language->lang_code . '-%')->get();
+
+                foreach ($themeOptions as $themeOption) {
+                    $themeOption->key = str_replace('theme-' . $themeName . '-' . $language->lang_code . '-', 'theme-' . $themeName . '-', $themeOption->key);
+
+                    if (!Setting::where('key', $themeOption->key)->count()) {
+                        $themeOption->save();
+                    }
+                }
+            }
+        } catch (Exception $exception) {
+            info($exception->getMessage());
+        }
+
+        $this->clearRoutesCache();
 
         event(new UpdatedContentEvent(LANGUAGE_MODULE_SCREEN_NAME, $request, $language));
 
@@ -372,5 +427,28 @@ class LanguageController extends BaseController
         }
 
         return count($folders);
+    }
+
+    /**
+     * @return bool
+     */
+    public function clearRoutesCache()
+    {
+        foreach (LanguageFacade::getSupportedLanguagesKeys() as $locale) {
+
+            $path = app()->getCachedRoutesPath();
+
+            if (!$locale) {
+                $locale = LanguageFacade::getDefaultLocale();
+            }
+
+            $path = substr($path, 0, -4) . '_' . $locale . '.php';
+
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+        }
+
+        return true;
     }
 }

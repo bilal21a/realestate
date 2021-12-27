@@ -5,6 +5,7 @@ namespace Botble\Base\Helpers;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 class BaseHelper
@@ -192,14 +193,6 @@ class BaseHelper
     }
 
     /**
-     * @return mixed
-     */
-    public function getHomepageId()
-    {
-        return theme_option('homepage_id', setting('show_on_front'));
-    }
-
-    /**
      * @param int $pageId
      * @return bool
      */
@@ -208,6 +201,14 @@ class BaseHelper
         $homepageId = $this->getHomepageId();
 
         return $pageId && $homepageId && $pageId == $homepageId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHomepageId()
+    {
+        return theme_option('homepage_id', setting('show_on_front'));
     }
 
     /**
@@ -257,5 +258,56 @@ class BaseHelper
         }
 
         return $url;
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function cleanEditorContent($value): string
+    {
+        $value = str_replace('<span', '<div style="display: inline-block;"', $value);
+        $value = str_replace('</span>', '</div>', $value);
+
+        return htmlentities(clean($value));
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhoneValidationRule(): string
+    {
+        return config('core.base.general.phone_validation_rule');
+    }
+
+    /**
+     * @param Collection $collection
+     * @param string $searchTerms
+     * @param string $column
+     * @return Collection
+     */
+    public function sortSearchResults($collection, $searchTerms, string $column)
+    {
+        if (!$collection instanceof Collection) {
+            $collection = collect($collection);
+        }
+
+        return $collection->sortByDesc(function ($item) use ($searchTerms, $column) {
+
+            $searchTerms = explode(' ', $searchTerms);
+
+            // The bigger the weight, the higher the record
+            $weight = 0;
+
+            // Iterate through search terms
+            foreach ($searchTerms as $term) {
+                if (strpos($item->{$column}, $term) !== false) {
+                    // Increase weight if the search term is found
+                    $weight += 1;
+                }
+            }
+
+            return $weight;
+        });
     }
 }

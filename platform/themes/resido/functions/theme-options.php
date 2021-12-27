@@ -382,6 +382,20 @@ app()->booted(function () {
             ],
         ])
         ->setField([
+            'id'         => 'property_header_layout',
+            'section_id' => 'es-state',
+            'label'      => __('Property header layouts'),
+            'type'       => 'select',
+            'attributes' => [
+                'name'    => 'property_header_layout',
+                'list'    => ['' => trans('plugins/blog::base.select')] + get_single_header_layout(),
+                'value'   => '',
+                'options' => [
+                    'class' => 'form-control',
+                ],
+            ],
+        ])
+        ->setField([
             'id'         => 'min_price',
             'section_id' => 'es-state',
             'type'       => 'repeater',

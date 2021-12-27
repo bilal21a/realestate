@@ -56,8 +56,8 @@ class BackupController extends BaseController
     public function store(BackupRequest $request, BaseHttpResponse $response)
     {
         try {
-            ini_set('max_execution_time', -1);
-            ini_set('memory_limit', -1);
+            @ini_set('max_execution_time', -1);
+            @ini_set('memory_limit', -1);
 
             $data = $this->backup->createBackupFolder($request->input('name'), $request->input('description'));
             $this->backup->backupDb();

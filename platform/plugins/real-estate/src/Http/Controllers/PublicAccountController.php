@@ -423,7 +423,7 @@ class PublicAccountController extends Controller
 
         $this->activityLogRepository->createOrUpdate(['action' => 'update_security']);
 
-        return $response->setMessage(trans('plugins/real-estate::dashboard.password_update_success'));
+        return $response->setMessage(trans('core/acl::users.password_update_success'));
     }
 
     /**

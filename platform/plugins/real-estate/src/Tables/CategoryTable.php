@@ -29,8 +29,8 @@ class CategoryTable extends TableAbstract
 
     /**
      * CategoryTable constructor.
-     * @param DataTables $table
-     * @param UrlGenerator $urlGenerator
+     * @param DataTables        $table
+     * @param UrlGenerator      $urlGenerator
      * @param CategoryInterface $categoryRepository
      */
     public function __construct(DataTables $table, UrlGenerator $urlGenerator, CategoryInterface $categoryRepository)
@@ -62,6 +62,13 @@ class CategoryTable extends TableAbstract
 
                 return Html::link(route('property_category.edit', $item->id), $item->name);
             })
+            ->editColumn('parent_id', function ($item) {
+                if ($item->parent_id) {
+                    return $item->parent->name;
+                }
+
+                return '';
+            })
             ->editColumn('checkbox', function ($item) {
                 return $this->getCheckbox($item->id);
             })
@@ -89,6 +96,7 @@ class CategoryTable extends TableAbstract
         $query = $this->repository->getModel()->select([
             're_categories.id',
             're_categories.name',
+            're_categories.parent_id',
             're_categories.created_at',
             're_categories.status',
         ]);
@@ -111,6 +119,11 @@ class CategoryTable extends TableAbstract
             'name'       => [
                 'name'  => 're_categories.name',
                 'title' => trans('core/base::tables.name'),
+                'class' => 'text-start',
+            ],
+            'parent_id'  => [
+                'name'  => 're_categories.parent_id',
+                'title' => trans('core/base::forms.parent'),
                 'class' => 'text-start',
             ],
             'created_at' => [

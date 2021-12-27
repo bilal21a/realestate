@@ -18,7 +18,7 @@ class CreateBlocksTable extends Migration
             $table->string('name');
             $table->string('alias');
             $table->string('description', 255)->nullable();
-            $table->text('content')->nullable();
+            $table->longText('content')->nullable();
             $table->string('status', 60)->default('published');
             $table->integer('user_id')->unsigned()->nullable()->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
