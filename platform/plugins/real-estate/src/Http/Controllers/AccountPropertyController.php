@@ -324,4 +324,15 @@ class AccountPropertyController extends Controller
             dd($e->getMessage());
         }
     }
+
+    public function new_register()
+    {
+        // return view('new_register');
+        SeoHelper::setTitle(auth('account')->user()->name);
+        Assets::addScriptsDirectly('vendor/core/plugins/real-estate/js/components.js');
+
+        if (view()->exists(Theme::getThemeNamespace('views.real-estate.account.dashboard.n2'))) {
+            return Theme::scope('real-estate.account.dashboard.n2')->render();
+        }
+    }
 }

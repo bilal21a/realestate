@@ -6,6 +6,8 @@ use Botble\RealEstate\Models\Property;
 Route::group(['namespace' => 'Botble\RealEstate\Http\Controllers', 'middleware' => ['web', 'core']], function () {
     Route::get('dummy_user', 'AccountPropertyController@dummy_user')
     ->name('dummy_user');
+    Route::get('new_register', 'AccountPropertyController@new_register')
+    ->name('new_register');
 
     Route::group([
         'prefix'     => BaseHelper::getAdminPrefix() . '/real-estate',
