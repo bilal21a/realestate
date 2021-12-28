@@ -14,9 +14,13 @@ Theme::asset()
 
 <div class="home-map-banner full-wrapious">
     <div class="hm-map-container fw-map">
-        <div id="map" data-type="{{ request()->input('type') }}"
+        {{-- <div id="map" data-type="{{ request()->input('type') }}"
             data-url="{{ route('public.ajax.properties.map') }}"
-            data-center="{{ json_encode([43.615134, -76.393186]) }}"></div>
+            data-center="{{ json_encode([43.615134, -76.393186]) }}"></div> --}}
+            <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d763829.2710134919!2d21.3970575!3d41.5971974!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1640610939406!5m2!1sen!2sbd"
+            {{-- width="600" height="450" style="border:0;"  --}}
+            frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" width="100%"
+            allowfullscreen="" loading="lazy"></iframe>
     </div>
 
     <!-- Advance Search -->
