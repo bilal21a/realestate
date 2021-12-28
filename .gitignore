@@ -19,6 +19,8 @@ sftp-config.json
 _ide_helper_models.php
 /storage/app/backup
 /storage/cache_keys.json
+composer.json
+composer.lock
 
 __MACOSX
 /.phpintel
