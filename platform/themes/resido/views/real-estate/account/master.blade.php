@@ -134,7 +134,53 @@
         }
     };
     var RV_MEDIA_URL = {'media_upload_from_editor': '{{ route('public.account.upload-from-editor') }}'};
+
+
+    $( document ).ready(function() {
+        $( ".fake_save_btn" ).click(function() {
+            $( ".quick_login" ).show( "slow" );
+
+
+        });
+
+        $( ".login_save" ).click(function() {
+            var username= $( "#name_login" ).val();
+            var email_s= $( "#email_login" ).val();
+            var phone_no= $( "#phone_login" ).val();
+
+            $.ajaxSetup({
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{ route('qucik_login') }}",
+                type:"POST",
+                data:{
+                _token: "{{ csrf_token() }}",
+                name:username,
+                email:email_s,
+                phon:phone_no
+                },
+                success:function(response){
+                    $( ".quick_login" ).hide( "slow" );
+                    $( ".error_msg" ).show();
+                    $( ".error_msg" ).text(response);
+                    $( ".real_save" ).show();
+                    $( ".fake_save" ).hide();
+
+                },
+                error: function(error) {
+                console.log(error);
+                }
+            });
+
+
+
+        });
+    });
 </script>
+
 @stack('header')
 @php $masterHeaderScript = ob_get_clean(); @endphp
 

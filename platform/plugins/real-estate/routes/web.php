@@ -8,6 +8,8 @@ Route::group(['namespace' => 'Botble\RealEstate\Http\Controllers', 'middleware' 
     ->name('dummy_user');
     Route::get('new_register', 'AccountPropertyController@new_register')
     ->name('new_register');
+    Route::post('qucik_login', 'AccountPropertyController@qucik_login')
+    ->name('qucik_login');
 
     Route::group([
         'prefix'     => BaseHelper::getAdminPrefix() . '/real-estate',

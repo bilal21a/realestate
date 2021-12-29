@@ -17,6 +17,7 @@ use Botble\RealEstate\Repositories\Interfaces\AccountInterface;
 use Botble\RealEstate\Repositories\Interfaces\PropertyInterface;
 use Botble\RealEstate\Services\SaveFacilitiesService;
 use Botble\RealEstate\Tables\AccountPropertyTable;
+use Carbon\Carbon;
 use EmailHandler;
 use Exception;
 use Illuminate\Contracts\Config\Repository;
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\DB;
 use RealEstateHelper;
 use SeoHelper;
 use Theme;
+use Illuminate\Support\Facades\Hash;
+use PhpParser\Node\Stmt\Catch_;
 
 class AccountPropertyController extends Controller
 {
@@ -101,8 +104,10 @@ class AccountPropertyController extends Controller
             $user = auth('account')->user();
             $form = $formBuilder->create(AccountPropertyForm::class);
             $form->setFormOption('template', Theme::getThemeNamespace() . '::views.real-estate.account.forms.base');
-            return Theme::scope('real-estate.account.forms.index',
-                ['user' => $user, 'formBuilder' => $formBuilder, 'form' => $form])->render();
+            return Theme::scope(
+                'real-estate.account.forms.index',
+                ['user' => $user, 'formBuilder' => $formBuilder, 'form' => $form]
+            )->render();
         }
 
         return $formBuilder->create(AccountPropertyForm::class)->renderForm();
@@ -202,8 +207,10 @@ class AccountPropertyController extends Controller
             $user = auth('account')->user();
             $form = $formBuilder->create(AccountPropertyForm::class, ['model' => $property]);
             $form->setFormOption('template', Theme::getThemeNamespace() . '::views.real-estate.account.forms.base');
-            return Theme::scope('real-estate.account.forms.index',
-                ['user' => $user, 'formBuilder' => $formBuilder, 'form' => $form])->render();
+            return Theme::scope(
+                'real-estate.account.forms.index',
+                ['user' => $user, 'formBuilder' => $formBuilder, 'form' => $form]
+            )->render();
         }
 
         return $formBuilder
@@ -314,13 +321,12 @@ class AccountPropertyController extends Controller
     public function dummy_user(Request $request)
     {
         try {
-            $user = DB::table('re_accounts')->where('email','demo@makhdom.mk')->first();
-            auth('account')->loginUsingId($user->id, TRUE);
+            $user = DB::table('re_accounts')->where('email', 'demo@makhdom.mk')->first();
+            auth('account')->loginUsingId($user->id, true);
 
             return redirect()->route('public.account.properties.create');
             dd(auth('account')->user());
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             dd($e->getMessage());
         }
     }
@@ -333,6 +339,43 @@ class AccountPropertyController extends Controller
 
         if (view()->exists(Theme::getThemeNamespace('views.real-estate.account.dashboard.n2'))) {
             return Theme::scope('real-estate.account.dashboard.n2')->render();
+        }
+    }
+    public function qucik_login(Request $request)
+    {
+        try {
+            $user=DB::table('re_accounts')->where('email', '=', $request->email)->first();
+            if ($user) {
+                auth('account')->logout();
+                auth('account')->loginUsingId($user->id, true);
+                return "Loged in Successfully.";
+            } else {
+                $values = array(
+            'first_name' => $request->name,
+            'last_name' => '',
+            'username' => str_replace(' ', '_', $request->name).rand(100,999),
+            'description' => null,
+            'gender' => null,
+            'email' => $request->email,
+            'password' => Hash::make('12345678'),
+            'avatar_id' => null,
+            'dob' => null,
+            'phone' => $request->phone,
+            'credits' => null,
+            'confirmed_at' => Carbon::now()->toDateTimeString(),
+            'email_verify_token' => null,
+            'is_featured' => 0,
+            'remember_token' => null,
+        );
+                DB::table('re_accounts')->insert($values);
+
+                $user=DB::table('re_accounts')->where('email', '=', $request->email)->first();
+                auth('account')->logout();
+                auth('account')->loginUsingId($user->id, true);
+                return "Loged in Successfully.";
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
     }
 }
