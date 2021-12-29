@@ -26,7 +26,7 @@
             <input class="form-control" placeholder="Phone Number" name="phone_login" type="text" id="phone_login">
         </div>
         <button type="button"  class="btn btn-sm btn-info login_save">
-            <i class="fas fa-sign-in-alt"></i> Quick Login
+            <i class="fas fa-sign-in-alt"></i> Publish
         </button>
     </div>
 
@@ -43,7 +43,7 @@
         <div class="widget-body">
             <div class="btn-set">
                 @php do_action(BASE_ACTION_FORM_ACTIONS, 'default') @endphp
-                <button type="submit" name="submit" value="save" class="btn btn-sm btn-info">
+                <button type="submit" name="submit" value="save" class="btn btn-sm btn-info real_save_btn">
                     <i class="fa fa-save"></i> {{ trans('core/base::forms.save') }}
                 </button>
                 @if (!isset($only_save) || $only_save == false)

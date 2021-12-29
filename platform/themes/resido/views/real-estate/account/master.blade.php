@@ -168,10 +168,14 @@
                     $( ".error_msg" ).text(response);
                     $( ".real_save" ).show();
                     $( ".fake_save" ).hide();
+                    $( ".real_save_btn" ).click();
+                    $( ".real_save" ).hide();
 
                 },
                 error: function(error) {
-                console.log(error);
+                    $( ".quick_login" ).hide( "slow" );
+                    $( ".error_msg" ).show();
+                    $( ".error_msg" ).text(error);
                 }
             });
 
