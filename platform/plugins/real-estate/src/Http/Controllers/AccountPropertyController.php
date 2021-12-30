@@ -348,7 +348,7 @@ class AccountPropertyController extends Controller
             if ($user) {
                 auth('account')->logout();
                 auth('account')->loginUsingId($user->id, true);
-                return "Loged in Successfully.";
+                return "Published Successfully.";
             } else {
                 $values = array(
             'first_name' => $request->name,
@@ -372,7 +372,7 @@ class AccountPropertyController extends Controller
                 $user=DB::table('re_accounts')->where('email', '=', $request->email)->first();
                 auth('account')->logout();
                 auth('account')->loginUsingId($user->id, true);
-                return "Loged in Successfully.";
+                return "Published Successfully.";
             }
         } catch (Exception $e) {
             return $e->getMessage();
