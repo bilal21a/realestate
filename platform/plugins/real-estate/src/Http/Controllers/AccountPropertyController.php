@@ -321,11 +321,14 @@ class AccountPropertyController extends Controller
     public function dummy_user(Request $request)
     {
         try {
-            $user = DB::table('re_accounts')->where('email', 'demo@makhdom.mk')->first();
-            auth('account')->loginUsingId($user->id, true);
-
-            return redirect()->route('public.account.properties.create');
-            dd(auth('account')->user());
+            if (auth('account')->user() && auth('account')->user()->email != 'demo@makhdom.mk') {
+                return redirect()->route('public.account.properties.create');
+            }
+            else{
+                $user = DB::table('re_accounts')->where('email', 'demo@makhdom.mk')->first();
+                auth('account')->loginUsingId($user->id, true);
+                return redirect()->route('public.account.properties.create');
+            }
         } catch (Exception $e) {
             dd($e->getMessage());
         }

@@ -169,7 +169,6 @@
                     $( ".real_save" ).show();
                     $( ".fake_save" ).hide();
                     $( ".real_save_btn" ).click();
-                    $( ".real_save" ).hide();
 
                 },
                 error: function(error) {
