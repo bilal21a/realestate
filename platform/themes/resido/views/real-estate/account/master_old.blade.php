@@ -16,7 +16,7 @@
         </div>
 
         <div class="row">
-            {{-- <div class="col-lg-3 col-md-12">
+            <div class="col-lg-3 col-md-12">
                 <div class="simple-sidebar sm-sidebar" id="filter_search">
 
                     <div class="search-sidebar_header">
@@ -109,9 +109,9 @@
                     </div>
 
                 </div>
-            </div> --}}
+            </div>
 
-            <div class="col-lg-10 offset-lg-1 col-md-12">
+            <div class="col-lg-9 col-md-12">
                 @yield('content')
             </div>
 
