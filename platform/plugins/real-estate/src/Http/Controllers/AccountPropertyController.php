@@ -173,8 +173,8 @@ class AccountPropertyController extends Controller
             ])
             ->sendUsingTemplate('new-pending-property');
 
-        return $response
-            ->setPreviousUrl(route('public.account.properties.index'))
+            return $response
+            ->setPreviousUrl(route('public.account.properties.create'))
             ->setNextUrl(route('public.account.properties.edit', $property->id))
             ->setMessage(trans('core/base::notices.create_success_message'));
     }
