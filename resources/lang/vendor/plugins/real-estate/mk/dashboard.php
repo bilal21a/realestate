@@ -89,12 +89,12 @@ return [
     'rejected_properties' => 'Rejected properties',
     'your_credits' => 'Your Credits',
     'credits' => 'credits',
-    'per_post' => 'per post',
-    'free' => 'Free',
-    'posts' => 'post(s)',
-    'total' => 'Total',
-    'purchase' => 'Purchase',
-    'select_facility' => 'Select facility',
-    'distance' => 'Distance (Km)',
-    'add_new' => 'Add new',
+    'per_post' => 'per post',//per post
+    'free' => 'Free',//Free
+    'posts' => 'post(s)',//post(s)
+    'total' => 'Total',//Total
+    'purchase' => 'Purchase',//Purchase
+    'select_facility' => 'Изберете објект',//Select facility
+    'distance' => 'Растојание (Км)',//Distance (Km)
+    'add_new' => 'Додади ново',//Add new
 ];

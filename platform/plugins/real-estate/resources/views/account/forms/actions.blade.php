@@ -12,24 +12,25 @@
     <div class="quick_login" style="margin-bottom:3rem; display:none">
         <div class="widget-title">
             <h4>
-                <span>Quick Login</span>
+                <span>@lang('plugins/real-estate::property.form.quick_login')</span>
+                {{-- Quick Login --}}
             </h4>
         </div>
 
         <div class="form-group mb-3">
-            <label for="name" class="control-label required" aria-required="true">Name</label>
-            <input class="form-control" placeholder="Name"  name="name_login" type="text" id="name_login">
+            <label for="name" class="control-label required" aria-required="true">@lang('plugins/real-estate::property.form.name_quick_login')</label>
+            <input class="form-control" placeholder="@lang('plugins/real-estate::property.form.name_quick_login')"  name="name_login" type="text" id="name_login">
         </div>
         <div class="form-group mb-3">
-            <label for="name" class="control-label required" aria-required="true">Email</label>
-            <input class="form-control" placeholder="email"  name="email_login" type="email" id="email_login">
+            <label for="name" class="control-label required" aria-required="true">@lang('plugins/real-estate::property.form.email_quick_login')</label>
+            <input class="form-control" placeholder="@lang('plugins/real-estate::property.form.email_quick_login')"  name="email_login" type="email" id="email_login">
         </div>
         <div class="form-group mb-3">
-            <label for="name" class="control-label required" aria-required="true">Phone Number</label>
-            <input class="form-control" placeholder="Phone Number" name="phone_login" type="text" id="phone_login">
+            <label for="name" class="control-label required" aria-required="true">@lang('plugins/real-estate::property.form.phone_quick_login')</label>
+            <input class="form-control" placeholder="@lang('plugins/real-estate::property.form.phone_quick_login')" name="phone_login" type="text" id="phone_login">
         </div>
         <button type="button"  class="btn btn-sm btn-info login_save">
-            <i class="fas fa-sign-in-alt"></i> Publish
+            <i class="fas fa-sign-in-alt"></i> @lang('plugins/real-estate::property.form.publish_quick_login')
         </button>
     </div>
 
