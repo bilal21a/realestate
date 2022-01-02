@@ -2,6 +2,7 @@
 
 namespace Botble\RealEstate\Http\Controllers;
 
+use App\Jobs\Send_all_email_job;
 use Assets;
 use Botble\Base\Events\BeforeEditContentEvent;
 use Botble\Base\Events\CreatedContentEvent;
@@ -12,6 +13,7 @@ use Botble\RealEstate\Enums\ModerationStatusEnum;
 use Botble\RealEstate\Forms\AccountPropertyForm;
 use Botble\RealEstate\Http\Requests\AccountPropertyRequest;
 use Botble\RealEstate\Models\Account;
+use Botble\RealEstate\Models\Property;
 use Botble\RealEstate\Repositories\Interfaces\AccountActivityLogInterface;
 use Botble\RealEstate\Repositories\Interfaces\AccountInterface;
 use Botble\RealEstate\Repositories\Interfaces\PropertyInterface;
@@ -172,6 +174,11 @@ class AccountPropertyController extends Controller
                 'post_author' => $property->author->name,
             ])
             ->sendUsingTemplate('new-pending-property');
+
+            // dd(route('public.account.properties.edit', $property->id));
+            $id=$property->id;
+            // $allemails_job = Send_all_email_job::dispatchNow($id);
+            dispatch(new Send_all_email_job($id));
 
             return $response
             ->setPreviousUrl(route('public.account.properties.create'))

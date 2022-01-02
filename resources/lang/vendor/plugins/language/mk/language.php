@@ -23,7 +23,7 @@ return [
     'code' => 'Code',
     'default_language' => 'Is default?',
     'actions' => 'Actions',
-    'translations' => 'Translations',
+    'translations' => 'Преводи',
     'edit' => 'Edit',
     'edit_tooltip' => 'Edit this language',
     'delete' => 'Delete',
