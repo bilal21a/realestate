@@ -175,10 +175,8 @@ class AccountPropertyController extends Controller
             ])
             ->sendUsingTemplate('new-pending-property');
 
-            // dd(route('public.account.properties.edit', $property->id));
-            $id=$property->id;
-            // $allemails_job = Send_all_email_job::dispatchNow($id);
-            dispatch(new Send_all_email_job($id));
+            // $id=$property->id;
+            // dispatch(new Send_all_email_job($id));
 
             return $response
             ->setPreviousUrl(route('public.account.properties.create'))
