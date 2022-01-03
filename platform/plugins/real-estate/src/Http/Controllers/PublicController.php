@@ -150,14 +150,16 @@ class PublicController extends Controller
 
         $images = [];
         foreach ($property->images as $image) {
-            $img = Image::make(Storage::get($image));
-            $img->resize(810, 610, function ($constraint) {
-                // $constraint->aspectRatio();
-                // $constraint->upsize();
-            });
-            $allName=explode(".",$image);
-            // dd(Storage::path($allName[0].'-autox610.'.$allName[1]));
-            $img->save(Storage::path($allName[0].'-autox610.'.$allName[1]));
+            if(Storage::exists($image)){
+            // if (file_exists(Storage::get($image))) {
+                $img = Image::make(Storage::get($image));
+                $img->resize(810, 610, function ($constraint) {
+                    // $constraint->aspectRatio();
+                    // $constraint->upsize();
+                });
+                $allName=explode(".",$image);
+                $img->save(Storage::path($allName[0].'-autox610.'.$allName[1]));
+            }
 
             $images[] = RvMedia::getImageUrl($image, null, false, RvMedia::getDefaultImage());
         }
