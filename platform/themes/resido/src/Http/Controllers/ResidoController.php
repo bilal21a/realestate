@@ -204,7 +204,9 @@ class ResidoController extends PublicController
             ],
         ];
 
-        $properties = app(PropertyInterface::class)->getProperties(['type' => $request->input('type')], $params);
+        // $properties = app(PropertyInterface::class)->getProperties(['type' => $request->input('type')], $params);
+        $properties = app(PropertyInterface::class)->getProperties();
+        // dd($params);
 
         return $response
             ->setData(PropertyResource::collection($properties))

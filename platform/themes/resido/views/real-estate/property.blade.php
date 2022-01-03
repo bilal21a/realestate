@@ -120,7 +120,16 @@
                     <!-- Agent Detail -->
                         <div class="sides-widget">
                             <div class="sides-widget-header">
-                                @if ($author->username)
+
+                                    <div class="sides-widget-details">
+                                        <h4>
+                                            Contact Owner
+                                        </h4>
+                                    </div>
+                                    <div class="clearfix"></div>
+
+                                {{-- Nick Work --}}
+                                {{-- @if ($author->username)
                                     <div class="agent-photo">
                                         <img src="{{ RvMedia::getImageUrl($author->avatar->url, 'thumb') }}"
                                              alt="{{ $author->name }}">
@@ -132,7 +141,7 @@
                                         <span><i class="lni-phone-handset"></i>{{ $author->phone }}</span>
                                     </div>
                                     <div class="clearfix"></div>
-                                @endif
+                                @endif --}}
                             </div>
 
                             <div class="sides-widget-body simple-form">
